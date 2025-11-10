@@ -1,17 +1,27 @@
-FROM python:3.11-slim
+# Use a full Debian base instead of slim
+FROM debian:bookworm-slim
 
-# Install LibreOffice and dependencies
+# Install dependencies and LibreOffice
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends libreoffice-writer libreoffice-core libreoffice-common libreoffice-pdfimport \
-    libreoffice-java-common fonts-dejavu-core curl ca-certificates && \
+    apt-get install -y --no-install-recommends \
+        libreoffice-writer \
+        libreoffice-core \
+        libreoffice-common \
+        fonts-dejavu-core \
+        python3 \
+        python3-pip \
+        curl \
+        ca-certificates && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install Python deps
+# Set up working directory
 WORKDIR /app
-COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
 
-COPY server.py /app/server.py
+# Copy Python files
+COPY requirements.txt /app/
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+COPY server.py /app/
 
 EXPOSE 8080
-CMD ["python", "server.py"]
+CMD ["python3", "server.py"]
