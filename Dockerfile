@@ -1,32 +1,26 @@
-# Use Debian slim base for stable LibreOffice install
-FROM debian:bookworm-slim
+# Start with a full Python image that already has pip and build tools
+FROM python:3.11-bookworm
 
-# Install system packages and LibreOffice
+# Install LibreOffice and fonts
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         libreoffice-writer \
         libreoffice-core \
         libreoffice-common \
         fonts-dejavu-core \
-        python3 \
-        python3-pip \
-        python3-setuptools \
-        python3-wheel \
-        python3-dev \
         curl \
         ca-certificates && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
+# Workdir
 WORKDIR /app
 
-# Copy requirements and install Python dependencies
+# Copy requirements and install Python packages
 COPY requirements.txt /app/
-RUN pip3 install --upgrade pip setuptools wheel && \
-    pip3 install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the app
+# Copy the Flask service
 COPY server.py /app/
 
 EXPOSE 8080
-CMD ["python3", "server.py"]
+CMD ["python", "server.py"]
