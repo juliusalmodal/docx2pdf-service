@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: investorrelationsacr.azurecr.io
-  IMAGE_NAME: investra/docx2pdf
+  IMAGE_NAME: investorrelationsapp/docx2pdf
 
 jobs:
   build:
